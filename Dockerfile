@@ -23,3 +23,4 @@ CMD ["/etc/init.d/agent-instance-startup", "init"]
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y racoon
 # Work around overlay bug
 RUN touch /etc/monit/conf.d/.hold
+LABEL "io.rancher.container.system"="agent-instance"
