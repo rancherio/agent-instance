@@ -1,27 +1,21 @@
-FROM ibuildthecloud/ubuntu-core-base:14.04
-ADD http://stedolan.github.io/jq/download/linux64/jq /usr/bin/
-RUN chmod +x /usr/bin/jq
-RUN echo deb http://archive.ubuntu.com/ubuntu trusty-backports main universe | \
-      sudo tee /etc/apt/sources.list.d/backports.list
-RUN apt-get update && apt-get install -y \
-    busybox \
+FROM alpine:3.2
+RUN echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
+    apk add --update \
+    bash \
+    coreutils \
     curl \
-    dnsmasq \
+    haproxy \
+    iproute2 \
+    ipsec-tools \
     iptables \
+    jq \
     monit \
-    socat \
     nodejs \
-    psmisc \
+    psmisc@testing \
+    socat \
+    tar \
     tcpdump \
-    uuid-runtime \
-    vim-tiny \
-    haproxy -t trusty-backports && \
-    rm -rf /var/lib/apt/lists
-RUN ln -s /usr/bin/nodejs /usr/bin/node
+    util-linux \
+    && rm -rf /var/cache/apk/*
 ADD startup.sh /etc/init.d/agent-instance-startup
-ADD https://github.com/rancherio/swarm/releases/download/v0.1.0-rancher/swarm /usr/bin/swarm
-RUN chmod +x /usr/bin/swarm
 CMD ["/etc/init.d/agent-instance-startup", "init"]
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y racoon
-# Work around overlay bug
-RUN touch /etc/monit/conf.d/.hold

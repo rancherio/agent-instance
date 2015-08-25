@@ -101,7 +101,16 @@ if [ "$1" = "start" ]; then
 elif [ "$1" = "init" ]; then
     export -p > /.dockerenv-save
     touch /etc/agent-instance
-    echo '::sysinit:bash /etc/init.d/agent-instance-startup start' > /etc/inittab
+    if [ -f /etc/alpine-release ]; then
+        sed -i 's/^#\(rc_sys=*\)/\1/;s/""/"lxc"/' /etc/rc.conf
+        sed -i 's/^#\(rc_crashed_start=*\)/\1/;s/YES/NO/' /etc/rc.conf
+        echo 'rc_haproxy_need="!net"' >> /etc/init.d/haproxy # todo move me
+        echo '::sysinit:/sbin/rc sysinit' > /etc/inittab
+        echo '::sysinit:bash /etc/init.d/agent-instance-startup start' >> /etc/inittab
+    else
+        echo '::sysinit:bash /etc/init.d/agent-instance-startup start' > /etc/inittab
+    fi
+
     if [ ! -e /init ]; then
         ln -s /bin/busybox /init
     fi
