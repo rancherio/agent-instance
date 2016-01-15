@@ -47,7 +47,21 @@ check_debug
 CONTENT_URL=/configcontent/configscripts
 INSTALL_ITEMS="configscripts agent-instance-startup"
 
+setup_logrotate()
+{
+    if [ -d '/etc/monit/conf.d' ]; then
 
+        cat > /etc/monit/conf.d/logrotate <<EOF
+check program logrotate with path /etc/cron.daily/logrotate 
+  with timeout 1800 seconds
+  every "0-25 6 * * *"
+  if status == 0 then exec /bin/true
+EOF
+
+        chmod 600 /etc/monit/conf.d/logrotate
+    fi
+}
+    
 call_curl()
 {
     local curl="curl -s" 
@@ -96,6 +110,7 @@ start()
     # Let scripts know its being ran during startup
     export CATTLE_AGENT_STARTUP=true
 
+    setup_logrotate
     setup_config_url
     download_agent
 }
