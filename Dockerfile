@@ -1,11 +1,12 @@
-FROM ubuntu:14.04.3
-ADD http://stedolan.github.io/jq/download/linux64/jq /usr/bin/
-RUN chmod +x /usr/bin/jq
+FROM ubuntu:16.04
 RUN apt-get update && apt-get install -y \
+    jq \
     busybox \
     curl \
     dnsmasq \
     iptables \
+    net-tools \
+    logrotate \
     monit \
     socat \
     psmisc \
@@ -14,9 +15,8 @@ RUN apt-get update && apt-get install -y \
     vim-tiny \
     openssl \
     libssl-dev \
-    software-properties-common && \
-    add-apt-repository ppa:vbernat/haproxy-1.6 && \
-    apt-get update && apt-get install -y haproxy && \
+    software-properties-common \
+    haproxy && \
     rm -rf /var/lib/apt/lists
 ADD startup.sh /etc/init.d/agent-instance-startup
 CMD ["/etc/init.d/agent-instance-startup", "init"]
