@@ -1,4 +1,6 @@
 FROM ubuntu:16.04
+# FROM arm=armhf/ubuntu:16.04
+
 RUN apt-get update && apt-get install -y \
     jq \
     busybox \
@@ -22,3 +24,4 @@ ADD startup.sh /etc/init.d/agent-instance-startup
 CMD ["/etc/init.d/agent-instance-startup", "init"]
 # Work around overlay bug
 RUN touch /etc/monit/conf.d/.hold
+ENV RANCHER_AGENT_INSTANCE_IMAGE rancher/agent-instance:v0.8.3
