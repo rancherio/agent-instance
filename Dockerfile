@@ -22,3 +22,4 @@ ADD startup.sh /etc/init.d/agent-instance-startup
 CMD ["/etc/init.d/agent-instance-startup", "init"]
 # Work around overlay bug
 RUN touch /etc/monit/conf.d/.hold
+LABEL "io.rancher.container.system"="agent-instance"
